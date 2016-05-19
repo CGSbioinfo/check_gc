@@ -18,7 +18,7 @@ ls /mnt/cgs-fs3/Sequencing/Analysis/NGS-K.OShaughnessy-40082/run_may16/rawReads/
 Output Table:
 #-----------#
 
-Tab separated matrix with read_name, read_length, gc_content. 
+Matrix with read_name, read_length, gc_content. 
 
 
 
