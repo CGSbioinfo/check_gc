@@ -2,21 +2,23 @@
 1. run calculate_gc
 
 2. Get the names of reads with more than x threshold gc content:
-awk '{if ($4>=0.9){print $1}}' sample_1_R1_gc.txt | sed 's/^@//g' > sample_1_R1_read_names.txt  
+awk '{if ($4>=0.9){print $1}}' sample_1_R1_gc.txt | sed 's/^@//g' > sample_1_R1_read_names.txt
 
 In parallel:
-ls *_gc.txt | sed 's/_R.*//g' | uniq | parallel -j4 --no-notice " awk '{if (\$4>=0.9){print \$1}}' {}_R1_gc.txt | sed 's/^@//g' > {}_R1_read_names.txt" 
-ls *_gc.txt | sed 's/_R.*//g' | uniq | parallel -j4 --no-notice " awk '{if (\$4>=0.9){print \$1}}' {}_R2_gc.txt | sed 's/^@//g' > {}_R2_read_names.txt" 
+ls *_gc.txt | sed 's/_R.*//g' | uniq | parallel -j9 --no-notice " awk '{if (\$4>=0.9){print \$1}}' {}_R1_gc.txt | sed 's/^@//g' > {}_R1_read_names.txt" 
+ls *_gc.txt | sed 's/_R.*//g' | uniq | parallel -j9 --no-notice " awk '{if (\$4>=0.9){print \$1}}' {}_R2_gc.txt | sed 's/^@//g' > {}_R2_read_names.txt" 
 
 3. Subset the reads from the fastq files using seqtk:
 seqtk subseq sample1_R2_001.fastq.gz sample1_R2_read_names.txt > fastq_high_gc/sample1_R2.fastq 
 # do for R1, R2, raw and trimmed
 
 In parallel:
-ls *read_names.txt | sed 's/_R._read_names.txt//g' | uniq | parallel -j4 --no-notice "seqtk subseq ../../rawReads/{}/{}_R1_001.fastq.gz {}_R1_read_names.txt > fastq/{}_R1.fastq "
+ls *read_names.txt | sed 's/_R._read_names.txt//g' | uniq | parallel -j9 --no-notice "seqtk subseq ../../rawReads/{}/{}_R1_001.fastq.gz {}_R1_read_names.txt > fastq/{}_R1.fastq "
 
-ls *read_names.txt | sed 's/_R._read_names.txt//g' | uniq | parallel -j4 --no-notice "seqtk subseq ../../rawReads/{}/{}_R2_001.fastq.gz {}_R2_read_names.txt > fastq/{}_R2.fastq "   
+ls *read_names.txt | sed 's/_R._read_names.txt//g' | uniq | parallel -j9 --no-notice "seqtk subseq ../../rawReads/{}/{}_R2_001.fastq.gz {}_R2_read_names.txt > fastq/{}_R2.fastq "   
 
-ls *read_names.txt | sed 's/_R._read_names.txt//g' | uniq | parallel -j4 --no-notice "seqtk subseq ../../trimmedReads/{}_R1_001_val_1.fq.gz {}_R1_read_names.txt > fastq/{}_R1.fastq "    
+ls *read_names.txt | sed 's/_R._read_names.txt//g' | uniq | parallel -j9 --no-notice "seqtk subseq ../../trimmedReads/{}_R1_001_val_1.fq.gz {}_R1_read_names.txt > fastq/{}_R1.fastq "    
 
-ls *read_names.txt | sed 's/_R._read_names.txt//g' | uniq | parallel -j4 --no-notice "seqtk subseq ../../trimmedReads/{}_R2_001_val_2.fq.gz {}_R2_read_names.txt > fastq/{}_R2.fastq "      
+ls *read_names.txt | sed 's/_R._read_names.txt//g' | uniq | parallel -j9 --no-notice "seqtk subseq ../{}_R2_001_val_2.fq.gz {}_R2_read_names.txt > fastq/{}_R2.fastq "      
+
+4. The list of reads can then be excluded from the bam files using picard tools
